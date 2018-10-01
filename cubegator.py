@@ -2,7 +2,6 @@ import maya.cmds as cmds
 
 #Cube-gator
 #Maya Python character
-#by Dylan Lau
 
 #create new file every execute
 cmds.file(new = True, force = True)
