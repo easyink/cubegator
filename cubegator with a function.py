@@ -182,6 +182,33 @@ s45=108
 s475=114
 s50=120
 s55=132
+
+BSway = 5 #butt sway value
+BUp = 0.125
+BUMax = 0.45
+
+ArmSwayUp = 0.35 #arm sway up value
+ArmSwayDown = -0.5 #arm sway down value
+ArmRotateBack = -20
+ArmRotateFront = 75
+
+HeadLeft = 0.5 #head swing left value
+HeadRight = -0.5 #head swing right value
+HeadRotateLeft = 15 #headrotate left value
+HeadRotateRight = -15 #headrotate right value
+
+LTorsoSwayUp = 10 #lower torso sway up value
+LTorsoSwayDown = -0.5 #lower torso sway down value
+
+BodyDown = -1 #body vertical sway down value
+BodyUp = 0 #gbody vertical rest value
+
+FootRotateLift = 20 #foot rotate value
+FootRotateDrag = -10 #foot drag value
+FootRotateFlat = 10
+
+TailTurn = 15
+
 #using the functions
 setShapeLook("Butt",(ButtSCL[0],ButtSCL[1],ButtSCL[2]),(ButtPOS[0],ButtPOS[1],ButtPOS[2]),"none","Cube","none")
 setShapeLook("Gut",(GutSCL[0],GutSCL[1],GutSCL[2]),(GutPOS[0],GutPOS[1],GutPOS[2]),(GutROT[0],GutROT[1],GutROT[2]),"Cube","Butt")
