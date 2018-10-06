@@ -53,8 +53,27 @@ def setRotate( objname , rotation ): #seperate rotation function for jaw
 	print "rotated "+ objname + " by " + str(rotation) + " degrees."
 
 def animateObject(obj,section,time,value):
-	cmds.setKeyframe(obj+section,t=time,v=value)
-	print "Animated " + obj + "'s " + section + " at " + str(time) + " seconds."
+	for i in range(len(time)):
+		if (time[i] is s000):
+			cmds.setKeyframe(obj+section,t=time[i],v=ZeroNull)
+			print "set zerod keyframe"
+		else:
+			if (value is RightFootRZ or value is LeftFootRZ):
+				if (i % 4 == 1):
+					cmds.setKeyframe(obj+section,t=time[i],v=value[0])
+				elif (i % 4 == 2):
+					cmds.setKeyframe(obj+section,t=time[i],v=value[1])
+				elif (i % 4 == 3):
+					cmds.setKeyframe(obj+section,t=time[i],v=value[2])
+				elif (i % 4 == 0):
+					cmds.setKeyframe(obj+section,t=time[i],v=value[3])
+			else:
+				if (i % 2 == 0): #even
+					cmds.setKeyframe(obj+section,t=time[i],v=value[0])
+				else:
+					cmds.setKeyframe(obj+section,t=time[i],v=value[1])
+		#print "Animated " + obj + "'s " + section + " at " + str(time[i]) + " seconds."
+
 #variables
 
 #SCL is SCALE
@@ -89,7 +108,7 @@ BottomSideTeethPOS = (2.25,TeethYZ[0],TeethYZ[1])
 TopFrontTeethAmount = 5
 TopFrontTeethPOS = (3.25,TeethYZ[0],0.4)
 
-TopSideTeethAmount = 10
+TopSideTeethAmount = 20
 TopSideTeethPOS = 3.15,TeethYZ[0],TeethYZ[1]
 
 ShoulderSCL = 0.5 #Scale of Shoulders X,Y,Z
@@ -160,32 +179,60 @@ Tail4SCL = (0.4,0.8,0.4)
 Tail4POS = (-5.3,-4.2,0)
 Tail4ROT = (0,0,110)
 
-s00=1
+#animation variables
+#time
+s000=1
 s025=6
-s05=12
+s050=12
 s075=18
-s10=24
+s100=24
 s125=30
-s15=36
+s150=36
 s175=42
-s20=48
+s200=48
 s225=54
-s25=60
+s250=60
 s275=66
-s30=72
+s300=72
 s325=78
-s35=84
+s350=84
 s375=90
-s40=96
+s400=96
 s425=102
-s45=108
+s450=108
 s475=114
-s50=120
-s55=132
+s500=120
+s525=126
+s550=132
+#time list variables
+quartertimelist = (
+	s000,
+	s025,s050,s075,s100,
+	s125,s150,s175,s200,
+	s225,s250,s275,s300,
+	s325,s350,s375,s400,
+	s425,s450,s475,s500,
+	s525,s550) #list of quarter times
+QTLN = len(quartertimelist) #
 
-BSway = 5 #butt sway value
+halftimelist = (
+	s000,
+	s050,s100,
+	s150,s200,
+	s250,s300,
+	s350,s400,
+	s450,s500,
+	s550)#list of half times
+HTLN = len(halftimelist)
+
+ZeroNull = 0
+
+BSwayForward = 5
+BSwayBackward = -5
 BUp = 0.125
 BUMax = 0.45
+
+HipRotate = 20
 
 ArmSwayUp = 0.35 #arm sway up value
 ArmSwayDown = -0.5 #arm sway down value
@@ -194,8 +241,7 @@ ArmRotateFront = 75
 
 HeadLeft = 0.5 #head swing left value
 HeadRight = -0.5 #head swing right value
-HeadRotateLeft = 15 #headrotate left value
-HeadRotateRight = -15 #headrotate right value
+HeadRotate = 15 #headrotate left value
 
 LTorsoSwayUp = 10 #lower torso sway up value
 LTorsoSwayDown = -0.5 #lower torso sway down value
@@ -209,13 +255,36 @@ FootRotateFlat = 10
 
 TailTurn = 15
 
+#list variables
+ButtRX = (BSwayForward,BSwayBackward)
+ButtTY = (BUp,BUMax)
+
+TorsoRZ = (LTorsoSwayUp,LTorsoSwayDown)
+ChestTY = (BodyDown,BodyUp)
+HeadTZ = (HeadLeft,HeadRight)
+HeadRX = (-HeadRotate,HeadRotate)
+
+RightHipRZ = (-HipRotate,HipRotate)
+LeftHipRZ = (HipRotate,-HipRotate)
+
+RightShoulderRZ = (ArmRotateBack,ArmRotateFront)
+LeftShoulderRZ = (ArmRotateFront,ArmRotateBack)
+
+RightShoulderTY = (ArmSwayDown,ArmSwayUp)
+LeftShoulderTY = (ArmSwayUp,ArmSwayDown)
+
+RightFootRZ = (FootRotateFlat,FootRotateDrag,FootRotateFlat,FootRotateLift)
+LeftFootRZ = (FootRotateFlat,FootRotateLift,FootRotateFlat,FootRotateDrag)
+
+TailRY = (TailTurn,-TailTurn)
+
 #using the functions
 setShapeLook("Butt",(ButtSCL[0],ButtSCL[1],ButtSCL[2]),(ButtPOS[0],ButtPOS[1],ButtPOS[2]),"none","Cube","none")
 setShapeLook("Gut",(GutSCL[0],GutSCL[1],GutSCL[2]),(GutPOS[0],GutPOS[1],GutPOS[2]),(GutROT[0],GutROT[1],GutROT[2]),"Cube","Butt")
 setShapeLook("Torso",(TorsoSCL[0],TorsoSCL[1],TorsoSCL[2]),(TorsoPOS[0],TorsoPOS[1],TorsoPOS[2]),(TorsoROT[0],TorsoROT[1],TorsoROT[2]),"Cube","Gut")
 setShapeLook("Chest",(ChestSCL[0],ChestSCL[1],ChestSCL[2]),(ChestPOS[0],ChestPOS[1],ChestPOS[2]),"none","Cube","Torso")
 setShapeLook("Head",(HeadSCL[0],HeadSCL[1],HeadSCL[2]),(HeadPOS[0],HeadPOS[1],HeadPOS[2]),"none","Cube","Chest")
-setShapeLook("Jaw",(JawSCL[0],JawSCL[1],JawSCL[2]),(JawPOS[0],JawPOS[1],JawPOS[2]),"none","Cube", "Head")
+setShapeLook("Jaw",(JawSCL[0],JawSCL[1],JawSCL[2]),(JawPOS[0],JawPOS[1],JawPOS[2]),"none","Cube","Head")
 setShapeLook("RightEyeSocket",(EyeSocketSCL[0],EyeSocketSCL[1],EyeSocketSCL[2]),(EyeSocketPOS[0],EyeSocketPOS[1],EyeSocketPOS[2]),"none","Cube","Head")
 setShapeLook("LeftEyeSocket",(EyeSocketSCL[0],EyeSocketSCL[1],EyeSocketSCL[2]),(EyeSocketPOS[0],EyeSocketPOS[1],-EyeSocketPOS[2]),"none","Cube","Head")
 setShapeLook("RightEye", (EyeBallSCL,EyeBallSCL,EyeBallSCL), (EyeBallPOS,EyeSocketPOS[1],EyeSocketPOS[2]),"none", "Sphere","RightEyeSocket")
@@ -254,403 +323,30 @@ setTeeth(BottomFrontTeethAmount, TeethSCL,BottomFrontTeethPOS,TeethOffset,False)
 setTeeth(BottomSideTeethAmount, TeethSCL, BottomSideTeethPOS,TeethOffset,False)
 setTeeth(TopFrontTeethAmount,TeethSCL,TopFrontTeethPOS,TeethOffset,True)
 setTeeth(TopSideTeethAmount,TeethSCL,TopSideTeethPOS,TeethOffset,True)
+
 setRotate("Jaw",(JawROT[0],JawROT[1],JawROT[2]))
 
 #animation
-
-animateObject("Butt",".rx",0,0)
-
-animateObject("Butt",".ty",0,0)
-animateObject("Torso",".rz",0,0)
-animateObject("Chest",".ty",0,0)
-animateObject("Head",".tz",0,0)
-animateObject("Head",".rz",0,0)
-animateObject("Head",".rx",0,0)
-
-animateObject("RightHip",".rz",0,0)
-animateObject("LeftHip",".rz",0,0)
-
-animateObject("RightShoulder",".rz",0,0)
-animateObject("LeftShoulder",".rz",0,0)
-animateObject("RightShoulder",".ty",0,0)
-animateObject("LeftShoulder",".ty",0,0)
-
-animateObject("RightFoot",".rz",0,0)
-animateObject("LeftFoot",".rz",0,0)
-
-animateObject("Tail1",".ry",0,0)
-animateObject("Tail2",".ry",0,0)
-animateObject("Tail3",".ry",0,0)
-animateObject("Tail4",".ry",0,0)
-#####
-animateObject("Butt",".ty", s025, BUp)
-
-animateObject("Torso",".rz", s025, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s025, BodyDown)
-
-animateObject("RightFoot",".rz", s025, FootRotateFlat)
-animateObject("LeftFoot",".rz", s025, FootRotateFlat)
-
-animateObject("Butt",".rx", s05, BSway)
-animateObject("Butt",".ty", s05, BUMax)
-
-animateObject("Chest",".ty", s05, BodyUp)
-
-animateObject("RightHip",".rz", s05, -20)
-animateObject("LeftHip",".rz", s05, 20)
-
-animateObject("RightShoulder",".ty", s05, ArmSwayDown)
-animateObject("RightShoulder",".rz", s05, ArmRotateBack)
-animateObject("LeftShoulder",".ty", s05, ArmSwayUp)
-animateObject("LeftShoulder",".rz", s05, ArmRotateFront)
-
-animateObject("Head",".tz", s05, HeadLeft)
-animateObject("Head",".rx", s05, HeadRotateLeft)
-
-animateObject("Torso",".rz", s05, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s05, FootRotateDrag)
-animateObject("LeftFoot",".rz", s05, FootRotateLift)
-
-animateObject("Tail1",".ry", s05, TailTurn)
-animateObject("Tail2",".ry", s05, TailTurn)
-animateObject("Tail3",".ry", s05, TailTurn)
-animateObject("Tail4",".ry", s05, TailTurn)
-
-animateObject("Butt",".ty", s075, BUp)
-
-animateObject("Torso",".rz", s075, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s075, BodyDown)
-
-animateObject("RightFoot",".rz", s075, FootRotateFlat)
-animateObject("LeftFoot",".rz", s075, FootRotateFlat)
- #sNUMBER is time = frame number
-animateObject("Butt",".rx", s10, -BSway)
-animateObject("Butt",".ty", s10, BUMax)
-
-animateObject("Chest",".ty", s10, BodyUp)
-
-animateObject("RightHip",".rz", s10, 20)
-animateObject("LeftHip",".rz", s10, -20)
-
-animateObject("RightShoulder",".ty", s10, ArmSwayUp)
-animateObject("RightShoulder",".rz", s10, ArmRotateFront)
-animateObject("LeftShoulder",".ty", s10, ArmSwayDown)
-animateObject("LeftShoulder",".rz", s10, ArmRotateBack)
-
-animateObject("Head",".tz", s10, HeadRight)
-animateObject("Head",".rx", s10, HeadRotateRight)
-
-animateObject("Torso",".rz", s10, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s10, FootRotateLift)
-animateObject("LeftFoot",".rz", s10, FootRotateDrag)
-
-animateObject("Tail1",".ry", s10, -TailTurn)
-animateObject("Tail2",".ry", s10, -TailTurn)
-animateObject("Tail3",".ry", s10, -TailTurn)
-animateObject("Tail4",".ry", s10, -TailTurn)
-
-animateObject("Butt",".ty", s125, BUp)
-
-animateObject("Torso",".rz", s125, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s125, BodyDown)
-
-animateObject("RightFoot",".rz", s125, FootRotateFlat)
-animateObject("LeftFoot",".rz", s125, FootRotateFlat)
-
-animateObject("Butt",".ty", s15, BUMax)
-animateObject("Butt",".rx", s15, BSway)
-
-animateObject("Chest",".ty", s15, BodyUp)
-
-animateObject("RightHip",".rz", s15, -20)
-animateObject("LeftHip",".rz", s15, 20)
-
-animateObject("RightShoulder",".ty", s15, ArmSwayDown)
-animateObject("RightShoulder",".rz", s15, ArmRotateBack)
-animateObject("LeftShoulder",".ty", s15, ArmSwayUp)
-animateObject("LeftShoulder",".rz", s15, ArmRotateFront)
-
-animateObject("Head",".tz", s15, HeadLeft)
-animateObject("Head",".rx", s15, HeadRotateLeft)
-
-animateObject("Torso",".rz", s15, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s15, FootRotateDrag)
-animateObject("LeftFoot",".rz", s15, FootRotateLift)
-
-animateObject("Tail1",".ry", s15, TailTurn)
-animateObject("Tail2",".ry", s15, TailTurn)
-animateObject("Tail3",".ry", s15, TailTurn)
-animateObject("Tail4",".ry", s15, TailTurn)
-
-animateObject("Butt",".ty", s175, BUp)
-
-animateObject("Torso",".rz", s175, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s175, BodyDown)
-
-animateObject("RightFoot",".rz", s175, FootRotateFlat)
-animateObject("LeftFoot",".rz", s175, FootRotateFlat)
-
-animateObject("Butt",".ty", s20, BUMax)
-animateObject("Butt",".rx", s20, -BSway)
-
-animateObject("Chest",".ty", s20, BodyUp)
-
-animateObject("RightHip",".rz", s20, 20)
-animateObject("LeftHip",".rz", s20, -20)
-
-animateObject("RightShoulder",".ty", s20, ArmSwayUp)
-animateObject("RightShoulder",".rz", s20, ArmRotateFront)
-animateObject("LeftShoulder",".ty", s20, ArmSwayDown)
-animateObject("LeftShoulder",".rz", s20, ArmRotateBack)
-
-animateObject("Head",".tz", s20, HeadRight)
-animateObject("Head",".rx", s20, HeadRotateRight)
-
-animateObject("Torso",".rz", s20, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s20, FootRotateLift)
-animateObject("LeftFoot",".rz", s20, FootRotateDrag)
-
-animateObject("Tail1",".ry", s20, -TailTurn)
-animateObject("Tail2",".ry", s20, -TailTurn)
-animateObject("Tail3",".ry", s20, -TailTurn)
-animateObject("Tail4",".ry", s20, -TailTurn)
-
-animateObject("Butt",".ty", s225, BUp)
-
-animateObject("Torso",".rz", s225, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s225, BodyDown)
-
-animateObject("RightFoot",".rz", s225, FootRotateFlat)
-animateObject("LeftFoot",".rz", s225, FootRotateFlat)
-
-animateObject("Butt",".ty", s25, BUMax)
-animateObject("Butt",".rx", s25, BSway)
-
-animateObject("Chest",".ty", s25, BodyUp)
-
-animateObject("RightHip",".rz", s25, -20)
-animateObject("LeftHip",".rz", s25, 20)
-
-animateObject("RightShoulder",".ty", s25, ArmSwayDown)
-animateObject("RightShoulder",".rz", s25, ArmRotateBack)
-animateObject("LeftShoulder",".ty", s25, ArmSwayUp)
-animateObject("LeftShoulder",".rz", s25, ArmRotateFront)
-
-animateObject("Head",".tz", s25, HeadLeft)
-animateObject("Head",".rx", s25, HeadRotateLeft)
-
-animateObject("Torso",".rz", s25, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s25, FootRotateDrag)
-animateObject("LeftFoot",".rz", s05, FootRotateLift)
-
-animateObject("Tail1",".ry", s25, TailTurn)
-animateObject("Tail2",".ry", s25, TailTurn)
-animateObject("Tail3",".ry", s25, TailTurn)
-animateObject("Tail4",".ry", s25, TailTurn)
-
-animateObject("Butt",".ty", s275, BUp)
-
-animateObject("Torso",".rz", s275, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s275, BodyDown)
-
-animateObject("RightFoot",".rz", s275, FootRotateFlat)
-animateObject("LeftFoot",".rz", s275, FootRotateFlat)
-
-animateObject("Butt",".ty", s30, BUMax)
-animateObject("Butt",".rx", s30, -BSway)
-
-animateObject("Chest",".ty", s30, BodyUp)
-
-animateObject("RightHip",".rz", s30, 20)
-animateObject("LeftHip",".rz", s30, -20)
-
-animateObject("RightShoulder",".ty", s30, ArmSwayUp)
-animateObject("RightShoulder",".rz", s30, ArmRotateFront)
-animateObject("LeftShoulder",".ty", s30, ArmSwayDown)
-animateObject("LeftShoulder",".rz", s30, ArmRotateBack)
-
-animateObject("Head",".tz", s30, HeadRight)
-animateObject("Head",".rx", s30, HeadRotateRight)
-
-animateObject("Torso",".rz", s30, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s30, FootRotateLift)
-animateObject("LeftFoot",".rz", s30, FootRotateDrag)
-
-animateObject("Tail1",".ry", s30, -TailTurn)
-animateObject("Tail2",".ry", s30, -TailTurn)
-animateObject("Tail3",".ry", s30, -TailTurn)
-animateObject("Tail4",".ry", s30, -TailTurn)
-
-animateObject("Butt",".ty", s325, BUp)
-animateObject("Torso",".rz", s325, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s325, BodyDown)
-
-animateObject("RightFoot",".rz", s325, FootRotateFlat)
-animateObject("LeftFoot",".rz", s325, FootRotateFlat)
-
-animateObject("Butt",".ty", s35, BUMax)
-animateObject("Butt",".rx", s35, BSway)
-
-animateObject("Chest",".ty", s35, BodyUp)
-
-animateObject("RightHip",".rz", s35, -20)
-animateObject("LeftHip",".rz", s35, 20)
-
-animateObject("RightShoulder",".ty", s35, ArmSwayDown)
-animateObject("RightShoulder",".rz", s35, ArmRotateBack)
-animateObject("LeftShoulder",".ty", s35, ArmSwayUp)
-animateObject("LeftShoulder",".rz", s35, ArmRotateFront)
-
-animateObject("Head",".tz", s35, HeadLeft)
-animateObject("Head",".rx", s35, HeadRotateLeft)
-
-animateObject("Torso",".rz", s35, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s35, FootRotateDrag)
-animateObject("LeftFoot",".rz", s35, FootRotateLift)
-
-animateObject("Tail1",".ry", s35, TailTurn)
-animateObject("Tail2",".ry", s35, TailTurn)
-animateObject("Tail3",".ry", s35, TailTurn)
-animateObject("Tail4",".ry", s35, TailTurn)
-
-animateObject("Butt",".ty", s375, BUp)
-animateObject("Torso",".rz", s375, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s375, BodyDown)
-
-animateObject("RightFoot",".rz", s375, FootRotateFlat)
-animateObject("LeftFoot",".rz", s375, FootRotateFlat)
-
-animateObject("Butt",".ty", s40, BUMax)
-animateObject("Butt",".rx", s40, -BSway)
-
-animateObject("Chest",".ty", s40, BodyUp)
-
-animateObject("RightHip",".rz", s40, 20)
-animateObject("LeftHip",".rz", s40, -20)
-
-animateObject("RightShoulder",".ty", s40, ArmSwayUp)
-animateObject("RightShoulder",".rz", s40, ArmRotateFront)
-animateObject("LeftShoulder",".ty", s40, ArmSwayDown)
-animateObject("LeftShoulder",".rz", s40, ArmRotateBack)
-
-animateObject("Head",".tz", s40, HeadRight)
-animateObject("Head",".rx", s40, HeadRotateRight)
-
-animateObject("Torso",".rz", s40, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s40, FootRotateLift)
-animateObject("LeftFoot",".rz", s40, FootRotateDrag)
-
-animateObject("Tail1",".ry", s40, -TailTurn)
-animateObject("Tail2",".ry", s40, -TailTurn)
-animateObject("Tail3",".ry", s40, -TailTurn)
-animateObject("Tail4",".ry", s40, -TailTurn)
-
-animateObject("Butt",".ty", s425, BUp)
-animateObject("Torso",".rz", s425, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s425, BodyDown)
-
-animateObject("RightFoot",".rz", s425, FootRotateFlat)
-animateObject("LeftFoot",".rz", s425, FootRotateFlat)
-
-animateObject("Butt",".ty", s45, BUMax)
-animateObject("Butt",".rx", s45, BSway)
-
-animateObject("Chest",".ty", s45, BodyUp)
-
-animateObject("RightHip",".rz", s45, -20)
-animateObject("LeftHip",".rz", s45, 20)
-
-animateObject("RightShoulder",".ty", s45, ArmSwayDown)
-animateObject("RightShoulder",".rz", s45, ArmRotateBack)
-animateObject("LeftShoulder",".ty", s45, ArmSwayUp)
-animateObject("LeftShoulder",".rz", s45, ArmRotateFront)
-
-animateObject("Head",".tz", s45, HeadLeft)
-animateObject("Head",".rx", s45, HeadRotateLeft)
-
-animateObject("Torso",".rz", s45, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s45, FootRotateDrag)
-animateObject("LeftFoot",".rz", s45, FootRotateLift)
-
-animateObject("Tail1",".ry", s45, TailTurn)
-animateObject("Tail2",".ry", s45, TailTurn)
-animateObject("Tail3",".ry", s45, TailTurn)
-animateObject("Tail4",".ry", s45, TailTurn)
-
-animateObject("Butt",".ty", s475, BUp)
-animateObject("Torso",".rz", s475, LTorsoSwayUp)
-
-animateObject("Chest",".ty", s475, BodyDown)
-
-animateObject("RightFoot",".rz", s475, FootRotateFlat)
-animateObject("LeftFoot",".rz", s475, FootRotateFlat)
-
-animateObject("Butt",".ty", s50, BUMax)
-animateObject("Butt",".rx", s50, -BSway)
-
-animateObject("Chest",".ty", s50, BodyUp)
-
-animateObject("RightHip",".rz", s50, 20)
-animateObject("LeftHip",".rz", s50, -20)
-
-animateObject("RightShoulder",".ty", s50, ArmSwayUp)
-animateObject("RightShoulder",".rz", s50, ArmRotateFront)
-animateObject("LeftShoulder",".ty", s50, ArmSwayDown)
-animateObject("LeftShoulder",".rz", s50, ArmRotateBack)
-
-animateObject("Head",".tz", s50, HeadRight)
-animateObject("Head",".rx", s50, HeadRotateRight)
-
-animateObject("Torso",".rz", s50, LTorsoSwayDown)
-
-animateObject("RightFoot",".rz", s50, FootRotateLift)
-animateObject("LeftFoot",".rz", s50, FootRotateDrag)
-
-animateObject("Tail1",".ry", s50, -TailTurn)
-animateObject("Tail2",".ry", s50, -TailTurn)
-animateObject("Tail3",".ry", s50, -TailTurn)
-animateObject("Tail4",".ry", s50, -TailTurn)
-
-animateObject("Butt",".rx", s55, 0)
-animateObject("Butt",".ty", s55, 0)
-
-animateObject("Chest",".ty", s55, 0)
-
-animateObject("RightHip",".rz", s55, 0)
-animateObject("LeftHip",".rz", s55, 0)
-
-animateObject("RightShoulder",".ty", s55, 0)
-animateObject("RightShoulder",".rz", s55, 0)
-animateObject("LeftShoulder",".ty", s55, 0)
-animateObject("LeftShoulder",".rz", s55, 0)
-
-animateObject("Head",".tz", s55, 0)
-animateObject("Head",".rx", s55, 0)
-
-animateObject("Torso",".rz", s55, 0)
-
-animateObject("RightFoot",".rz", s55, 0)
-animateObject("LeftFoot",".rz", s55, 0)
-
-animateObject("Tail1",".ry", s55, 0)
-animateObject("Tail2",".ry", s55, 0)
-animateObject("Tail3",".ry", s55, 0)
-animateObject("Tail4",".ry", s55, 0)
+animateObject("Butt",".rx",halftimelist,ButtRX)
+
+animateObject("Butt",".ty",quartertimelist,ButtTY)
+animateObject("Torso",".rz",quartertimelist,TorsoRZ)
+animateObject("Chest",".ty",quartertimelist,ChestTY)
+animateObject("Head",".tz",halftimelist,HeadTZ)
+animateObject("Head",".rx",halftimelist,HeadRX)
+
+animateObject("RightHip",".rz",halftimelist,RightHipRZ)
+animateObject("LeftHip",".rz",halftimelist,LeftHipRZ)
+
+animateObject("RightShoulder",".rz",halftimelist,RightShoulderRZ)
+animateObject("LeftShoulder",".rz",halftimelist,LeftShoulderRZ)
+animateObject("RightShoulder",".ty",halftimelist,RightShoulderTY)
+animateObject("LeftShoulder",".ty",halftimelist,LeftShoulderTY)
+
+animateObject("RightFoot",".rz",quartertimelist,RightFootRZ)
+animateObject("LeftFoot",".rz",quartertimelist,LeftFootRZ)
+
+animateObject("Tail1",".ry",halftimelist,TailRY)
+animateObject("Tail2",".ry",halftimelist,TailRY)
+animateObject("Tail3",".ry",halftimelist,TailRY)
+animateObject("Tail4",".ry",halftimelist,TailRY)
